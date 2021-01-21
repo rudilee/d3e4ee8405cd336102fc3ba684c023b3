@@ -1,0 +1,25 @@
+version: "3"
+services: 
+  web:
+    build: .
+    ports: 
+      - "80:80"
+      - "443:443"
+    volumes: 
+      - ./:/app:Z
+    links: 
+      - database
+    environment: 
+      DB_HOSTNAME: database
+      DB_NAME: deotrans
+      DB_USERNAME: deotrans
+      DB_PASSWORD: D30tr4n5
+
+  database:
+    image: postgres
+    ports: 
+      - "5432:5432"
+    environment: 
+      POSTGRES_DB: deotrans
+      POSTGRES_USER: deotrans
+      POSTGRES_PASSWORD: D30tr4n5
