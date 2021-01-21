@@ -1,0 +1,13 @@
+{
+    "name": "rudilee/deotrans-code-challenge",
+    "description": "DEOTrans code challange - REST API to send an email",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rudi",
+            "email": "rudi@kanayahijab.com"
+        }
+    ],
+    "require": {}
+}
