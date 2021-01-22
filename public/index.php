@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Front Controller
+ * Single controller to handles all the requests
+ * php version 7.4
+ * 
+ * @category FrontController
+ * @package  DEOTransCodeChallenge
+ * @author   Rudi <rudi@kanayahijab.com>
+ * @license  https://opensource.org/license/MIT MIT License
+ * @link     https://github.com/rudilee/deotrans-code-chalenge
+ */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -25,13 +37,21 @@ $strategy = new JsonStrategy($responseFactory);
 $router = new Router();
 $router->setStrategy($strategy);
 
-$router->map('GET', '/', function (ServerRequestInterface $request): array {
-    return ['title' => 'Simple test API', 'version' => 1];
-});
+$router->map(
+    'GET',
+    '/',
+    function (ServerRequestInterface $request): array {
+        return ['title' => 'Simple test API', 'version' => 1];
+    }
+);
 
-$router->map('GET', '/hello/world', function (ServerRequestInterface $request): array {
-    return ['hello' => 'world'];
-});
+$router->map(
+    'GET',
+    '/hello/world',
+    function (ServerRequestInterface $request): array {
+        return ['hello' => 'world'];
+    }
+);
 
 $response = $router->dispatch($request);
 
