@@ -40,16 +40,24 @@ $router->setStrategy($strategy);
 $router->map(
     'GET',
     '/',
-    function (ServerRequestInterface $request): array {
-        return ['title' => 'Simple test API', 'version' => 1];
+    function (): array {
+        return ['All is well..'];
     }
 );
 
 $router->map(
     'GET',
-    '/hello/world',
+    '/emails',
+    function (): array {
+        return [];
+    }
+);
+
+$router->map(
+    'POST',
+    '/emails',
     function (ServerRequestInterface $request): array {
-        return ['hello' => 'world'];
+        return [];
     }
 );
 
