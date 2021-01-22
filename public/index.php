@@ -1,31 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/routes.php';
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\HttpKernel\EventListener\RouterListener;
-use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use League\Route\Router;
+use League\Route\Strategy\JsonStrategy;
+use Psr\Http\Message\ServerRequestInterface;
 
-$matcher = new UrlMatcher($routes, new RequestContext());
+$request = ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
 
-$dispatcher = new EventDispatcher();
-$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
+$responseFactory = new ResponseFactory();
+$strategy = new JsonStrategy($responseFactory);
 
-$controllerResolver = new ControllerResolver();
-$argumentResolver = new ArgumentResolver();
+$router = new Router();
+$router->setStrategy($strategy);
 
-$kernel = new HttpKernel($dispatcher, $controllerResolver, new RequestStack(), $argumentResolver);
+$router->map('GET', '/', function (ServerRequestInterface $request): array {
+    return ['title' => 'Simple test API', 'version' => 1];
+});
 
-$request = Request::createFromGlobals();
+$router->map('GET', '/hello/world', function (ServerRequestInterface $request): array {
+    return ['hello' => 'world'];
+});
 
-$response = $kernel->handle($request);
-$response->send();
+$response = $router->dispatch($request);
 
-$kernel->terminate($request, $response);
+(new SapiEmitter)->emit($response);
