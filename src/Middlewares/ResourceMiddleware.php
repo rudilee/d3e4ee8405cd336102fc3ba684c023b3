@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace DEOTransCodeChallenge\Middlewares;
 
-use DEOTransCodeChallenge\Repositories\AccessTokenRepository;
+use DEOTransCodeChallenge\Factories\OAuthServerFactory;
 use Exception;
 use Laminas\Diactoros\Response;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -39,22 +38,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ResourceMiddleware implements MiddlewareInterface
 {
     /**
-     * Create OAuth2 ResourceServer object with predefined public key location.
-     * 
-     * @return ResourceServer
-     */
-    public function createResourceServer(): ResourceServer
-    {
-        $publicKeyPath = 'file://' . __DIR__ . '/../../keys/public.key';
-        $server = new ResourceServer(
-            new AccessTokenRepository,
-            $publicKeyPath
-        );
-
-        return $server;
-    }
-
-    /**
      * Process an incoming server request.
      * 
      * Processes an incoming server request in order to produce a response.
@@ -70,7 +53,7 @@ class ResourceMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
-        $server = $this->createResourceServer();
+        $server = OAuthServerFactory::createResourceServer();
 
         try {
             $request = $server->validateAuthenticatedRequest($request);
