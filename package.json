@@ -1,0 +1,21 @@
+{
+  "name": "deotrans-code-challenge",
+  "version": "1.0.0",
+  "description": "DEOTrans Code Challenge",
+  "scripts": {
+    "build": "parcel build ./src/client.html --dist-dir public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudilee/d3e4ee8405cd336102fc3ba684c023b3.git"
+  },
+  "author": "Rudi <rudi@kanayahijab.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rudilee/d3e4ee8405cd336102fc3ba684c023b3/issues"
+  },
+  "homepage": "https://github.com/rudilee/d3e4ee8405cd336102fc3ba684c023b3#readme",
+  "devDependencies": {
+    "parcel": "^2.0.0-nightly.551"
+  }
+}
