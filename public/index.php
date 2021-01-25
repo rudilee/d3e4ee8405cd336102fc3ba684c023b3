@@ -16,11 +16,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use DEOTransCodeChallenge\Entities\UserEntity;
+use DEOTransCodeChallenge\Factories\OAuthServerFactory;
 use DEOTransCodeChallenge\Middlewares\ResourceMiddleware;
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\Route\Router;
 use League\Route\Strategy\JsonStrategy;
 use Psr\Http\Message\ResponseInterface;
@@ -41,6 +45,52 @@ $router->map(
     '/',
     function (): ResponseInterface {
         return new RedirectResponse('/client.html');
+    }
+);
+
+$router->map(
+    'GET',
+    '/authorize',
+    function (ServerRequestInterface $request): ResponseInterface {
+        $server = OAuthServerFactory::createAuthorizationServer();
+
+        try {
+            $authRequest = $server->validateAuthorizationRequest($request);
+            $authRequest->setUser(new UserEntity);
+            $authRequest->setAuthorizationApproved(true);
+
+            return $server->completeAuthorizationRequest($authRequest, new Response);
+        } catch (OAuthServerException $exception) {
+            return $exception->generateHttpResponse(new Response);
+        } catch (Exception $exception) {
+            return (new OAuthServerException(
+                $exception->getMessage(),
+                0,
+                'unknown_error',
+                500
+            ))->generateHttpResponse(new Response);
+        }
+    }
+);
+
+$router->map(
+    'POST',
+    '/access_token',
+    function (ServerRequestInterface $request): ResponseInterface {
+        $server =  OAuthServerFactory::createAuthorizationServer();
+
+        try {
+            return $server->respondToAccessTokenRequest($request, new Response);
+        } catch (OAuthServerException $exception) {
+            return $exception->generateHttpResponse(new Response);
+        } catch (Exception $exception) {
+            return (new OAuthServerException(
+                $exception->getMessage(),
+                0,
+                'unknown_error',
+                500
+            ))->generateHttpResponse(new Response);
+        }
     }
 );
 
