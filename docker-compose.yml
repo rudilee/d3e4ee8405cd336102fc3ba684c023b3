@@ -14,6 +14,8 @@ services:
       DB_NAME: deotrans
       DB_USERNAME: deotrans
       DB_PASSWORD: D30tr4n5
+      OAUTH2_STRING_PASSWORD: "onk+R7RFdKAkoQKUpZpvrCxMoZJOwIEdOInCHLmibSo="
+    user: "${UID}:${GID}"
 
   database:
     image: postgres
