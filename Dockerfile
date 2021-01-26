@@ -4,7 +4,7 @@ FROM php:7.4-apache
 RUN apt-get update \
     && apt-get install -y libpq-dev zlib1g-dev libzip-dev \
     && pecl install xdebug \
-    && docker-php-ext-install pgsql zip \
+    && docker-php-ext-install pgsql pdo_pgsql zip \
     && docker-php-ext-enable xdebug
 
 # Tambah konfigurasi xdebug
@@ -14,7 +14,7 @@ RUN { \
     echo 'xdebug.remote_autostart=on'; \
     echo 'xdebug.remote_connect_back=on'; \
     echo 'xdebug.remote_port=9001'; \
-} > /usr/local/etc/php/conf.d/xdebug.ini
+    } > /usr/local/etc/php/conf.d/xdebug.ini
 
 # Untuk production copy folder app
 # COPY . /app
