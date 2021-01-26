@@ -1,5 +1,4 @@
 /vendor/
-.vscode
 node_modules
 .cache
 .parcel-cache
