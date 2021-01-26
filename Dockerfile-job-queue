@@ -1,0 +1,17 @@
+FROM php:7.4-cli
+
+# Install extension php xdebug & pdo-pgsql
+RUN apt-get update \
+    && apt-get install -y libpq-dev zlib1g-dev libzip-dev sendmail\
+    && docker-php-ext-install pgsql pdo_pgsql zip pcntl \
+    && docker-php-ext-configure pcntl --enable-pcntl
+
+# Untuk production copy folder app
+# COPY . /app
+
+# Untuk development mount folder app
+VOLUME [ "/app" ]
+
+# Jalanin job queue handler
+WORKDIR /app/scripts
+CMD php job_queue_handler.php
