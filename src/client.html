@@ -6,10 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Send Email Form</title>
+    <link rel="stylesheet" href="./client.css">
 </head>
 
 <body>
-    <email-form></email-form>
+    <h1>Send Email Form</h1>
+    <form class="pure-form pure-form-aligned" id="send-email-form">
+        <div class="pure-control-group">
+            <label for="sender">From</label>
+            <input type="email" id="sender" name="sender" placeholder="from@email.address" required maxlength="320">
+        </div>
+        <div class="pure-control-group">
+            <label for="receiver">To</label>
+            <input type="email" id="receiver" name="receiver" placeholder="to@email.address" required maxlength="320">
+        </div>
+        <div class="pure-control-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="Email subject" required maxlength="78">
+        </div>
+        <div class="pure-control-group">
+            <label for="message">Message</label>
+            <textarea name="message" id="message" cols="30" rows="5" required></textarea>
+        </div>
+        <div class="pure-controls">
+            <button class="pure-button pure-button-primary">Send Email</button>
+        </div>
+    </form>
+
     <script src="./client.js"></script>
 </body>
 
