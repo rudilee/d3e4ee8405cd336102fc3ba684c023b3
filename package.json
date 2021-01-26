@@ -17,5 +17,8 @@
   "homepage": "https://github.com/rudilee/d3e4ee8405cd336102fc3ba684c023b3#readme",
   "devDependencies": {
     "parcel": "^2.0.0-nightly.551"
+  },
+  "dependencies": {
+    "purecss": "^2.0.5"
   }
 }
