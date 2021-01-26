@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Bernard\Message\DefaultMessage;
 use DEOTransCodeChallenge\Entities\UserEntity;
 use DEOTransCodeChallenge\Factories\DatabaseFactory;
+use DEOTransCodeChallenge\Factories\JobQueueFactory;
 use DEOTransCodeChallenge\Factories\OAuthServerFactory;
 // use DEOTransCodeChallenge\Middlewares\ResourceMiddleware;
 use Laminas\Diactoros\Response;
@@ -121,7 +123,8 @@ $router->group(
                     return ['error' => 'Mandatory parameters invalid'];
                 }
 
-                $insertEmails = DatabaseFactory::createConnection()->prepare(
+                $conn = DatabaseFactory::createConnection();
+                $insertEmails = $conn->prepare(
                     'INSERT INTO emails (' .
                         'sender, receiver, subject, message' .
                         ') VALUES (' .
@@ -136,6 +139,11 @@ $router->group(
                         ':subject' => $params['subject'],
                         ':message' => $params['message']
                     ]
+                );
+
+                $params['id'] = $conn->lastInsertId('emails_id_seq');
+                JobQueueFactory::createProducer()->produce(
+                    new DefaultMessage('SendEmail', $params)
                 );
 
                 return ['message' => 'Email inserted'];
