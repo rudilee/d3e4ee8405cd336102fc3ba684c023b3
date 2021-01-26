@@ -49,11 +49,11 @@ class ClientEntity implements ClientEntityInterface
     /**
      * Set the registered redirect URI (as a string).
      * 
-     * @param string|array $uri 
+     * @param string $uri 
      *
      * @return void
      */
-    public function setRedirectUri(string|array $uri)
+    public function setRedirectUri(string $uri)
     {
         $this->redirectUri = $uri;
     }
