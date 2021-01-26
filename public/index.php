@@ -17,8 +17,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use DEOTransCodeChallenge\Entities\UserEntity;
+use DEOTransCodeChallenge\Factories\DatabaseFactory;
 use DEOTransCodeChallenge\Factories\OAuthServerFactory;
-use DEOTransCodeChallenge\Middlewares\ResourceMiddleware;
+// use DEOTransCodeChallenge\Middlewares\ResourceMiddleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ResponseFactory;
@@ -101,7 +102,9 @@ $router->group(
             'GET',
             '/emails',
             function (): array {
-                return [];
+                return DatabaseFactory::createConnection()
+                    ->query('SELECT * FROM emails')
+                    ->fetchAll(PDO::FETCH_ASSOC);
             }
         );
 
@@ -109,12 +112,38 @@ $router->group(
             'POST',
             '/emails',
             function (ServerRequestInterface $request): array {
-                return [];
+                $params = $request->getParsedBody();
+                if (empty($params)) {
+                    return ['error' => 'Empty parameters'];
+                }
+
+                if (!key_exists('sender', $params) || !key_exists('receiver', $params) || !key_exists('subject', $params) || !key_exists('message', $params)) {
+                    return ['error' => 'Mandatory parameters invalid'];
+                }
+
+                $insertEmails = DatabaseFactory::createConnection()->prepare(
+                    'INSERT INTO emails (' .
+                        'sender, receiver, subject, message' .
+                        ') VALUES (' .
+                        ':sender, :receiver, :subject, :message' .
+                        ')'
+                );
+
+                $insertEmails->execute(
+                    [
+                        ':sender' => $params['sender'],
+                        ':receiver' => $params['receiver'],
+                        ':subject' => $params['subject'],
+                        ':message' => $params['message']
+                    ]
+                );
+
+                return ['message' => 'Email inserted'];
             }
         );
     }
 )
-    ->middleware(new ResourceMiddleware)
+    // ->middleware(new ResourceMiddleware)
     ->setStrategy(new JsonStrategy(new ResponseFactory));
 
 $response = $router->dispatch($request);
