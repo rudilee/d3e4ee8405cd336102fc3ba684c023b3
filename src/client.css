@@ -1,1 +1,5 @@
-@import "../node_modules/purecss/build/pure.css"
+@import "../node_modules/purecss/build/pure.css";   
+
+h1 {
+    padding-left: 4em; 
+}
