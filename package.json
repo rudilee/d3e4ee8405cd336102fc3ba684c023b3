@@ -19,6 +19,7 @@
     "parcel": "^2.0.0-nightly.551"
   },
   "dependencies": {
-    "purecss": "^2.0.5"
+    "purecss": "^2.0.5",
+    "sweetalert2": "^10.13.3"
   }
 }
