@@ -67,6 +67,8 @@ class JobQueueFactory
     /**
      * Create Bernard queue consumer
      * 
+     * @param $sendEmailHandler function
+     * 
      * @return Consumer
      */
     public static function createConsumer($sendEmailHandler): Consumer
