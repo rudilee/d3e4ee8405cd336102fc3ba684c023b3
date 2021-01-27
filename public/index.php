@@ -20,6 +20,9 @@ use Bernard\Message\DefaultMessage;
 // use DEOTransCodeChallenge\Entities\UserEntity;
 use DEOTransCodeChallenge\Factories\DatabaseFactory;
 use DEOTransCodeChallenge\Factories\JobQueueFactory;
+use DEOTransCodeChallenge\Helpers\JsonWebToken;
+use DEOTransCodeChallenge\Middlewares\JwtAuthMiddleware;
+use Laminas\Diactoros\Response\JsonResponse;
 // use DEOTransCodeChallenge\Factories\OAuthServerFactory;
 // use DEOTransCodeChallenge\Middlewares\ResourceMiddleware;
 // use Laminas\Diactoros\Response;
@@ -100,6 +103,46 @@ $router->map(
 // );
 // ================
 
+$jsonStrategy = new JsonStrategy(new ResponseFactory);
+
+$router->map(
+    'POST',
+    '/login',
+    function (ServerRequestInterface $request): ResponseInterface {
+        $params = $request->getParsedBody();
+        if (empty($params)) {
+            return new JsonResponse(['error' => 'Empty parameters']);
+        }
+
+        if (!key_exists('username', $params) || !key_exists('password', $params)) {
+            return new JsonResponse(['error' => 'Mandatory parameters invalid']);
+        }
+
+        $selectPassword = DatabaseFactory::createConnection()->prepare(
+            'SELECT password FROM users WHERE username = :username'
+        );
+
+        $selectPassword->execute([':username' => $params['username']]);
+
+        $result = $selectPassword->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (password_verify($params['password'], $result['password'])) {
+                $token = JsonWebToken::getInstance()->encode(
+                    ['username' => $params['username']]
+                );
+
+                return new JsonResponse(
+                    ['message' => 'Login success'],
+                    200,
+                    ['X-API-KEY' => $token]
+                );
+            }
+        }
+
+        return new JsonResponse(['message' => 'Login failed'], 401);
+    }
+);
+
 $router->group(
     '/api',
     function ($router) {
@@ -155,7 +198,8 @@ $router->group(
     }
 )
     // ->middleware(new ResourceMiddleware)
-    ->setStrategy(new JsonStrategy(new ResponseFactory));
+    ->middleware(new JwtAuthMiddleware)
+    ->setStrategy($jsonStrategy);
 
 $response = $router->dispatch($request);
 
