@@ -10,9 +10,9 @@ Use `docker-compose` to run local docker containers of the web application, pass
 USER_ID=$(id -u) GROUP_ID=$(id -g) docker-compose up --build
 ```
 
-Parameter `--build` untuk membuat docker image `web` & `job` dari konfigurasi docker `Dockerfile` & `Dockerfile-job-queue`, bisa dihilangkan jika image sudah dibuat waktu menjalankan container berikutnya.
+Parameter `--build` used to build `web` & `job` docker image from `Dockerfile` & `Dockerfile-job-queue` docker description files, it could be omitted for next startup.
 
-Environment variables `USER_ID` & `GROUP_ID` digunakan untuk menjalankan container `web` & `job` dengan user yg sama dg yg menjalankan `docker-compose`, supaya sama dengan hak akses file `keys/private.key` & `keys/public.key`. Bisa disesuaikan jika mengganti owner id kedua file tersebut.
+The `USER_ID` & `GROUP_ID` environment variables are used to run the `web` & `job` containers with the same user as the one who execute `docker-compose` command, so the containers could access `keys/private.key` & `keys/public.key`. It can be adjusted with the actual owner user id of the files if changed.
 
 ## How To Use
 
