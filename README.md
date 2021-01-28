@@ -109,3 +109,5 @@ Sendmail-->Job Queue\nHandler: Email delivered
 Job Queue\nHandler->Database: Update Email row
 ```
 
+*Turns out GitHub did not support sequence diagram rendering, so below is the rendered image*
+![API Call Flow](images/api_call_flow.png)
