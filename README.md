@@ -4,6 +4,12 @@ Web application & REST API to send an email.
 
 ## How To Run
 
+First, we need to install all the PHP dependencies using `composer`:
+
+```bash
+composer install
+```
+
 Use `docker-compose` to run local docker containers of the web application, pass the current user id & group id with `USER_ID` & `GROUP_ID` environment variables:
 
 ```bash
