@@ -17,7 +17,7 @@ services:
       DB_PASSWORD: D30tr4n5
       QUEUE_HOSTNAME: queue
       OAUTH2_STRING_PASSWORD: "onk+R7RFdKAkoQKUpZpvrCxMoZJOwIEdOInCHLmibSo="
-    user: "${UID}:${GID}"
+    user: "${USER_ID}:${GROUP_ID}"
 
   job:
     build:
