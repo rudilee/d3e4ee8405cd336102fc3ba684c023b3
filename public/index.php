@@ -111,11 +111,11 @@ $router->map(
     function (ServerRequestInterface $request): ResponseInterface {
         $params = $request->getParsedBody();
         if (empty($params)) {
-            return new JsonResponse(['error' => 'Empty parameters']);
+            return new JsonResponse(['error' => 'Empty parameters'], 400);
         }
 
         if (!key_exists('username', $params) || !key_exists('password', $params)) {
-            return new JsonResponse(['error' => 'Mandatory parameters invalid']);
+            return new JsonResponse(['error' => 'Mandatory parameters invalid'], 400);
         }
 
         $selectPassword = DatabaseFactory::createConnection()->prepare(
@@ -149,24 +149,26 @@ $router->group(
         $router->map(
             'GET',
             '/emails',
-            function (): array {
-                return DatabaseFactory::createConnection()
-                    ->query('SELECT * FROM emails')
-                    ->fetchAll(PDO::FETCH_ASSOC);
+            function (): ResponseInterface {
+                return new JsonResponse(
+                    DatabaseFactory::createConnection()
+                        ->query('SELECT * FROM emails')
+                        ->fetchAll(PDO::FETCH_ASSOC)
+                );
             }
         );
 
         $router->map(
             'POST',
             '/emails',
-            function (ServerRequestInterface $request): array {
+            function (ServerRequestInterface $request): ResponseInterface {
                 $params = $request->getParsedBody();
                 if (empty($params)) {
-                    return ['error' => 'Empty parameters'];
+                    return new JsonResponse(['error' => 'Empty parameters'], 400);
                 }
 
                 if (!key_exists('sender', $params) || !key_exists('receiver', $params) || !key_exists('subject', $params) || !key_exists('message', $params)) {
-                    return ['error' => 'Mandatory parameters invalid'];
+                    return new JsonResponse(['error' => 'Mandatory parameters invalid'], 400);
                 }
 
                 $conn = DatabaseFactory::createConnection();
@@ -192,14 +194,13 @@ $router->group(
                     new DefaultMessage('SendEmail', $params)
                 );
 
-                return ['message' => 'Email inserted'];
+                return new JsonResponse(['message' => 'Email inserted']);
             }
         );
     }
 )
     // ->middleware(new ResourceMiddleware)
-    ->middleware(new JwtAuthMiddleware)
-    ->setStrategy($jsonStrategy);
+    ->middleware(new JwtAuthMiddleware);
 
 $response = $router->dispatch($request);
 
